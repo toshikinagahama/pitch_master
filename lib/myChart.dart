@@ -11,37 +11,11 @@ class SensorChartArea extends StatelessWidget {
   bool _isMeasuring = false;
   String _measButtonText = "Start";
   Timer _timer;
-  List<FlSpot> _data_X;
+  List<List<FlSpot>> _dataList;
 
-  SensorChartArea(List<FlSpot> data) {
-    _data_X = data;
+  SensorChartArea(List<List<FlSpot>> dataList) {
+    _dataList = dataList;
   }
-
-  // void _toggleMeasurement() {
-  //   _isMeasuring = !_isMeasuring;
-  //   if (_isMeasuring) {
-  //     _measButtonText = "Stop";
-  //     _timer = Timer.periodic(
-  //       Duration(milliseconds: 10),
-  //       _onTimer,
-  //     );
-  //   } else {
-  //     _measButtonText = "Start";
-  //     _timer?.cancel();
-  //   }
-  // }
-
-  // void _onTimer(Timer timer) {
-  //   setState(() {
-  //     var rng = new Random();
-  //     double val = rng.nextDouble();
-  //     _data_X.add(FlSpot(_counter, val));
-  //     if (_data_X.length > 500) {
-  //       _data_X.removeAt(0);
-  //     }
-  //     _counter += 0.1;
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +29,7 @@ class SensorChartArea extends StatelessWidget {
             lineTouchData: LineTouchData(enabled: false),
             lineBarsData: [
               LineChartBarData(
-                spots: _data_X,
+                spots: _dataList[0],
                 isCurved: false,
                 barWidth: 2,
                 colors: [
@@ -71,88 +45,56 @@ class SensorChartArea extends StatelessWidget {
           swapAnimationDuration: Duration(milliseconds: 0),
         ),
       )),
-      // RaisedButton(
-      //   child: Text(_measButtonText),
-      //   onPressed: _toggleMeasurement,
-      // ),
+      Expanded(
+          child: SizedBox(
+        width: 300,
+        height: 140,
+        child: LineChart(
+          LineChartData(
+            lineTouchData: LineTouchData(enabled: false),
+            lineBarsData: [
+              LineChartBarData(
+                spots: _dataList[1],
+                isCurved: false,
+                barWidth: 2,
+                colors: [
+                  Colors.red,
+                ],
+                dotData: FlDotData(
+                  show: false,
+                ),
+              ),
+            ],
+            // gridData: FlGridData(),
+          ),
+          swapAnimationDuration: Duration(milliseconds: 0),
+        ),
+      )),
+      Expanded(
+          child: SizedBox(
+        width: 300,
+        height: 140,
+        child: LineChart(
+          LineChartData(
+            lineTouchData: LineTouchData(enabled: false),
+            lineBarsData: [
+              LineChartBarData(
+                spots: _dataList[2],
+                isCurved: false,
+                barWidth: 2,
+                colors: [
+                  Colors.red,
+                ],
+                dotData: FlDotData(
+                  show: false,
+                ),
+              ),
+            ],
+            // gridData: FlGridData(),
+          ),
+          swapAnimationDuration: Duration(milliseconds: 0),
+        ),
+      )),
     ]);
   }
-  // SensorChartArea({Key key, this.title}) : super(key: key);
-  // final String title;
-
-  // @override
-  // _SensorChartAreaState createState() => _SensorChartAreaState();
 }
-
-// class _SensorChartAreaState extends State<SensorChartArea> {
-//   double _counter = 0.0;
-//   bool _isMeasuring = false;
-//   String _measButtonText = "Start";
-//   Timer _timer;
-//   List<FlSpot> _data_X;
-
-//   _SensorChartAreaState(List<FlSpot> data) {
-//     _data_X = data;
-//   }
-
-//   void _toggleMeasurement() {
-//     _isMeasuring = !_isMeasuring;
-//     if (_isMeasuring) {
-//       _measButtonText = "Stop";
-//       _timer = Timer.periodic(
-//         Duration(milliseconds: 10),
-//         _onTimer,
-//       );
-//     } else {
-//       _measButtonText = "Start";
-//       _timer?.cancel();
-//     }
-//   }
-
-//   void _onTimer(Timer timer) {
-//     setState(() {
-//       var rng = new Random();
-//       double val = rng.nextDouble();
-//       _data_X.add(FlSpot(_counter, val));
-//       if (_data_X.length > 500) {
-//         _data_X.removeAt(0);
-//       }
-//       _counter += 0.1;
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(children: <Widget>[
-//       Expanded(
-//           child: SizedBox(
-//         width: 300,
-//         height: 140,
-//         child: LineChart(
-//           LineChartData(
-//             lineTouchData: LineTouchData(enabled: false),
-//             lineBarsData: [
-//               LineChartBarData(
-//                 spots: _data_X,
-//                 isCurved: false,
-//                 barWidth: 2,
-//                 colors: [
-//                   Colors.red,
-//                 ],
-//                 dotData: FlDotData(
-//                   show: false,
-//                 ),
-//               ),
-//             ],
-//             // gridData: FlGridData(),
-//           ),
-//           swapAnimationDuration: Duration(milliseconds: 0),
-//         ),
-//       )),
-//       // RaisedButton(
-//       //   child: Text(_measButtonText),
-//       //   onPressed: _toggleMeasurement,
-//       // ),
-//     ]);
-//   }
-// }
