@@ -38,6 +38,7 @@ class SensorValueState extends ChangeNotifier {
     [FlSpot(0, 0)],
     [FlSpot(0, 0)]
   ];
+  List<double> _counterList = [0.0, 0.0];
   double _counter = 0.0;
 
   FlutterBlue flutterBlue = FlutterBlue.instance;
@@ -46,6 +47,8 @@ class SensorValueState extends ChangeNotifier {
   List<BluetoothCharacteristic> charaList = [null, null];
 
   void startMeas() {
+    _counterList[0] = 0.1;
+    _counterList[1] = 0.1;
     _counter = 0.1;
     for (int i = 0; i < this._dataList.length; i++) {
       this._dataList[i] = [FlSpot(0, 0)];
@@ -64,9 +67,11 @@ class SensorValueState extends ChangeNotifier {
   }
 
   void DeviceDisconnect(index) {
-    if (deviceList.length >= index) return;
+    if (deviceList.length <= index) return;
     if (deviceList[index] != null) {
       deviceList[index].disconnect();
+      deviceList[index] = null;
+      charaList[index] = null;
     }
   }
 
@@ -74,7 +79,7 @@ class SensorValueState extends ChangeNotifier {
     print(deviceList.length);
     if (deviceList.length <= index) return;
     bool isFoundDevice = false;
-    _counter = 0.1;
+    _counterList[index] = 0.1;
     print("scan start");
     flutterBlue.startScan(timeout: Duration(seconds: 1));
     // Listen to scan results
@@ -127,6 +132,7 @@ class SensorValueState extends ChangeNotifier {
                                 sensorValArray.add(val);
                               }
                               print(index);
+                              print(str);
                               print(sensorValArray);
                               update(index, sensorValArray);
                             });
@@ -156,23 +162,25 @@ class SensorValueState extends ChangeNotifier {
 
   void update(int index, List<double> vals) {
     if (vals.length < 6) return;
-    _dataList[index].add(FlSpot(_counter,
+    _dataList[index].add(FlSpot(_counterList[index],
         sqrt(vals[0] * vals[0] + vals[1] * vals[1] + vals[2] * vals[2])));
     if (_dataList[index].length > 50) {
       _dataList[index].removeAt(0);
-      if (_dataList[0].length >= 50 && _dataList[1].length >= 50) {
+      if (_dataList[0].length >= 50 &&
+          _dataList[1].length >= 50 &&
+          index == 0) {
         if (_dataList[1][49].y >= 0.0001) {
-          _dataList[2]
-              .add(FlSpot(_counter, _dataList[0][49].y / _dataList[1][49].y));
+          _dataList[2].add(FlSpot(
+              _counterList[index], _dataList[0][49].y / _dataList[1][49].y));
         } else {
-          _dataList[2].add(FlSpot(_counter, 0.0));
+          _dataList[2].add(FlSpot(_counterList[index], 0.0));
         }
         if (_dataList[2].length > 50) {
           _dataList[2].removeAt(0);
         }
       }
     }
-    _counter += 0.01;
+    _counterList[index] += 1 / 32;
     notifyListeners();
   }
 }
